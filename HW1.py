@@ -40,13 +40,13 @@ import matplotlib.pyplot as plt
 # plt.savefig('Lagrangian polynomial for N=41.png')
 
 #Centered arrangement l=r=1
-# delta_x = 1
-x = np.array([-1, 0, 1])
-y = np.array([-0.2672, 0, 0.1638])
+delta_x = 1
+x = np.array([-delta_x, 0, delta_x])
+y =  np.tanh(x) * np.sin(5 * x + 1.5)
 Lagrangian_poly = scipy.interpolate.lagrange(x, y)
 print(Lagrangian_poly)  # check the polynomial comment out when necessary
 y_function =  np.tanh(x) * np.sin(5 * x + 1.5)
-#Truncation_error = abs(y_function - Lagrangian_poly)
+#Truncation_error = abs(y - Lagrangian_poly)
 should be derivative, not the function
 print(Truncation_error)
 u = plt.plot(x[2], Truncation_error[2], 'ro')
