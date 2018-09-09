@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.interpolate
 import matplotlib.pyplot as plt
+from sympy import *
 
 # # Given points for interpolation
 # x = np.array([-1, 0, 1])
@@ -40,14 +41,21 @@ import matplotlib.pyplot as plt
 # plt.savefig('Lagrangian polynomial for N=41.png')
 
 #Centered arrangement l=r=1
-delta_x = 1
-x = np.array([-delta_x, 0, delta_x])
-y =  np.tanh(x) * np.sin(5 * x + 1.5)
-Lagrangian_poly = scipy.interpolate.lagrange(x, y)
-print(Lagrangian_poly)  # check the polynomial comment out when necessary
-y_function =  np.tanh(x) * np.sin(5 * x + 1.5)
-#Truncation_error = abs(y - Lagrangian_poly)
-should be derivative, not the function
-print(Truncation_error)
-u = plt.plot(x[2], Truncation_error[2], 'ro')
-plt.show()
+plot_y = np.zeros(101)
+plot_x = np.zeros(101)
+y_prime0 = 0.258819
+for i in range (100, 0, -1):
+    delta_x = i/100
+    x = np.array([-delta_x, 0, delta_x])
+    y = np.tanh(x) * np.sin(5*x + 1.5)
+    Lagrangian_poly = scipy.interpolate.lagrange(x, y)
+    Lag_prime = np.poly1d.deriv(Lagrangian_poly)
+    Truncation_error = abs(y_prime0 - Lag_prime(0))
+    # print(Truncation_error)
+    plot_x[i] = 1/delta_x
+    plot_y[i] = Truncation_error
+    # plt.plot(plot_x, plot_y, 'ro')
+    plt.loglog(plot_x,plot_y)
+    plt.show()
+    # u = plt.plot(x[2], Truncation_error[2], 'ro')
+    # plt.show()
