@@ -41,11 +41,12 @@ from sympy import *
 # plt.savefig('Lagrangian polynomial for N=41.png')
 
 #Centered arrangement l=r=1
-plot_y = np.zeros(101)
-plot_x = np.zeros(101)
+plot_y = np.zeros(1001)
+plot_x = np.zeros(1001)
+plot_z = np.zeros(1001)
 y_prime0 = 0.258819
-for i in range (100, 0, -1):
-    delta_x = i/100
+for i in range(1000, 0, -1):
+    delta_x = i/1000
     x = np.array([-delta_x, 0, delta_x])
     y = np.tanh(x) * np.sin(5*x + 1.5)
     Lagrangian_poly = scipy.interpolate.lagrange(x, y)
@@ -53,6 +54,14 @@ for i in range (100, 0, -1):
     Truncation_error = abs(y_prime0 - Lag_prime(0))
     plot_x[i] = 1/delta_x
     plot_y[i] = Truncation_error
-    plt.loglog(plot_x,plot_y)
-    plt.show()
+    plot_z[i] = delta_x**2
+    # print(Truncation_error)
+    print(1/delta_x)
+plt.loglog(plot_x, plot_y,'bo')
+plt.xlabel('Inverse of the grid spacing')
+plt.ylabel('Truncation error')
+plt.title('Center (C) arrangement l = r = 1')
+plt.loglog(plot_x,plot_z,'r--',label='n = 2')
+plt.legend()
+plt.savefig('Center (C) arrangement l = r = 1.png')
 
