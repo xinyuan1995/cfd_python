@@ -51,11 +51,8 @@ for i in range (100, 0, -1):
     Lagrangian_poly = scipy.interpolate.lagrange(x, y)
     Lag_prime = np.poly1d.deriv(Lagrangian_poly)
     Truncation_error = abs(y_prime0 - Lag_prime(0))
-    # print(Truncation_error)
     plot_x[i] = 1/delta_x
     plot_y[i] = Truncation_error
-    # plt.plot(plot_x, plot_y, 'ro')
     plt.loglog(plot_x,plot_y)
     plt.show()
-    # u = plt.plot(x[2], Truncation_error[2], 'ro')
-    # plt.show()
+
