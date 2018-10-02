@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy.linalg import inv
 from mpi4py import MPI
 
 ##(a)
@@ -9,39 +8,46 @@ def fx(x):
     return np.sin(x)
 def fpx(x):
     return np.cos(x)
-plot_x = np.zeros(9999999)
-plot_y = np.zeros(9999999)
-for index in range(9999999, 0, -1):
-    delta_x = index/100000000
-    n = int(1/delta_x) - 2
-    a = [[0 for row in range(n)] for col in range(n+2)]
+plot_x = np.zeros(99999999)
+plot_y = np.zeros(99999999)
+for index in range(99999999, 0, -1):
+    delta_x = index/1000000000
+    n = int(1/delta_x)
+    a = [[0 for row in range(n)] for col in range(n)]
     for i in range(n):
-        for j in range(n+2):
-            if i == n:
-                if j == i:
-                    a[i][j] =  - 1./(2.*delta_x)
-                elif j ==i+1:
-                    a[i][j] = 0
-                elif j ==i+2:
-                    a[i][j] =  1./(2.*delta_x)
+        for j in range(n):
+            if i == 0:
+                a[i][j] = 0
+            elif i == n:
+                a[i][j] = 0
+            elif j == i:
+                a[i][j] =  - 1./(2.*delta_x)
+            elif j ==i+1:
+                a[i][j] = 0
+            elif j ==i+2:
+                a[i][j] =  1./(2.*delta_x)
             else:
                 a[i][j] = 0.
 
-
     b = [[0] for col in range(n)]
     for i in range(n):
-        if i < n:
-            b[i][0] = fpx(delta_x*i)
+        b[i][0] = fx(delta_x*i)
+    c = [[0] for col in range(n)]
+    for i in range(n):
+        if i == 0:
+            c[i][0] = 1
+        elif i == n:
+            c[i][0] = fpx(1)
         else:
-            b[i][0] = fpx(delta_x*i) - fx(1)/(2.*delta_x)
-    ainv = inv(a)
+            c[i][0] = 0
     npb = np.array(b)
-    npainv = np.array(ainv)
-    res = np.dot(npainv, npb)
+    npa = np.array(a)
+    npc = np.array(c)
+    res = np.dot(npa, npb) + npc
     abssum = 0
     func = [[0] for col in range(n)]
     for i in range(n):
-        abssum += ((fx(i*delta_x) - res[i])**2)
+        abssum += ((fpx(i*delta_x) - res[i])**2)
     plot_y[index - 1] = np.sqrt(abssum/n)
     plot_x[index-1] = 1/delta_x
 plt.loglog(plot_x,plot_y)
