@@ -1,7 +1,9 @@
 import numpy as np
-from mpi4py import MPI
 import matplotlib.pyplot as plt
+from mpi4py import MPI
 import math
+
+##(a)
 
 def fx(x):
     return np.sin(x)
@@ -10,7 +12,7 @@ def fpx(x):
 
 FROM_INDEX = 1 # FROM 10^1
 TO_INDEX = 4 # TO 10^4
-DELTA_INDEX = .5 # WITH MULTIPLIER 10^0.5
+DELTA_INDEX = 0.5 # WITH MULTIPLIER 10^0.5
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()#The index of the thread
@@ -22,11 +24,11 @@ if rank == 0:
     plot_x = []
     plot_y = []
     plot_z = []
+    wt = []
     while index <= TO_INDEX:
         N = round(10 ** index)#Current N
         delta_x = 1. / N
         res = 0.0
-
         #send to slave node
         for process in range(1, size):
             comm.send([process, N], dest=process, tag=1)#Send task to slave node
@@ -47,6 +49,7 @@ if rank == 0:
         plot_y.append(np.sqrt(s/N))
         plot_x.append(1/delta_x)
         plot_z.append(delta_x)
+        wt.append(MPI.Wtime())
 
     #Shut down all slave nodes
     for process in range(1,size):
@@ -56,11 +59,17 @@ if rank == 0:
     plt.loglog(plot_x,plot_y)
     plt.xlabel('Inverse of the grid spacing')
     plt.ylabel('RMS error')
-    plt.title('N_procs = ?')
-    plt.loglog(plot_x,plot_z,'r--')
-    # plt.savefig('DOODLE1.png')
+    plt.title('N_procs = 1')
+    plt.loglog(plot_x,plot_z,'r--',label='n = 1')
+    plt.legend()
+    plt.savefig('N_procs = 1.png')
     plt.show()
-
+    print(wt[-1]-wt[0])
+#Time for N_procs = 1 is 12.376559019088745s
+#Time for N_procs = 2 is 
+#Time for N_procs = 4 is 
+#Time for N_procs = 8 is 
+#Time for N_procs = 16 is 
 else:
     #DO slave
     while True:
